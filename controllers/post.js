@@ -1,3 +1,5 @@
+var Post = MODEL('post').model;
+
 exports.install = function() {
     // Define Routes
     ROUTE('GET /api/posts', getAllPosts);
@@ -9,25 +11,67 @@ exports.install = function() {
 
 function getAllPosts() {
     var self = this;
-    self.json("Je suis dans la fonction qui permet récupérer tous les posts");
+    Post.find({}).exec()
+        .then((allPosts) => {
+            self.status = 201;
+            self.json(allPosts);
+        }).catch((error) => {
+            self.status = 400;
+            self.json(error);
+        });
 }
 
 function getOnePost() {
     var self = this;
-    self.json("Je suis dans la fonction qui permet d'afficher un post");
+    Post.findOne({ "_id": self.params.id }).exec()
+        .then((postFind) => {
+            self.status = 201;
+            self.json(postFind);
+        })
+        .catch((error) => {
+            self.status = 400;
+            self.json(error);
+        });
 }
 
 function createPost() {
     var self = this;
-    self.json("Je suis dans la fonction qui permet de créer un post");
+    var newPost = new Post(self.body);
+    newPost.save()
+        .then(() => {
+            self.status = 201;
+            self.json("Post ajouté avec succès");
+        })
+        .catch((error) => {
+            self.status = 400;
+            self.json(error)
+        });
 }
 
 function modifyPost() {
     var self = this;
-    self.json("Je suis dans la fonction qui permet de modifier un post");
+    Post.findByIdAndUpdate({
+        _id: self.params.id
+    }, self.body)
+        .then(() => {
+            self.status = 201;
+            self.json("Post modifié avec succès");
+        })
+        .catch((error) => {
+            self.status = 400;
+            self.json(error);
+        });
 }
 
 function deletePost() {
     var self = this;
-    self.json("Je suis dans la fonction qui permet de supprimer un post");
+    Post.findByIdAndDelete(self.params.id)
+        .then(() => {
+            self.status = 201;
+            self.json("Post supprimé avec succès");
+        })
+        .catch((error) => {
+            self.status = 400;
+            self.json(error);
+        });
 }
