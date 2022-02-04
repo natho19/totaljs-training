@@ -4,8 +4,9 @@
 // ===================================================
 
 const options = {};
+const mongoose = require('mongoose');
 
-// options.ip = '127.0.0.1';
+options.ip = '127.0.0.1';
 // options.port = parseInt(process.argv[2]);
 // options.unixsocket = require('path').join(require('os').tmpdir(), 'app_name');
 // options.unixsocket777 = true;
@@ -35,3 +36,37 @@ options.servicemode = process.argv.indexOf('--servicemode', 1) !== -1;
 
 var type = process.argv.indexOf('--release', 1) !== -1 ? 'release' : 'debug';
 require('total4/' + type)(options);
+
+// Connecting
+mongoose.connection.on('connecting', function() {
+    console.log('MongoDB connecting...');
+})
+
+// Error
+mongoose.connection.on('error', function(error) {
+    console.log('Error in MongoDB connection: ' + error.message);
+})
+
+// Connected
+mongoose.connection.on('connected', function() {
+    console.log('MongoDB connected!');
+})
+
+// Open
+mongoose.connection.once('open', function() {
+    console.log('MongoDB connection opened!');
+})
+
+// Reconnected
+mongoose.connection.on('reconnected', function() {
+    console.log('MongoDB reconnected!');
+})
+
+// Reconnexion
+mongoose.connection.on('disconnected', function() {
+    console.log('MongoDB disconnected!');
+    mongoose.connect('mongodb://localhost:27017/training');
+})
+
+// Initial connection
+mongoose.connect('mongodb://localhost:27017/training');
