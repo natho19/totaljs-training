@@ -9,6 +9,7 @@ exports.install = function() {
     ROUTE('DELETE /api/posts/{id}', deletePost);
 }
 
+// Afficher tous les posts
 function getAllPosts() {
     var self = this;
     Post.find({}).exec()
@@ -21,6 +22,7 @@ function getAllPosts() {
         });
 }
 
+// Afficher un post
 function getOnePost() {
     var self = this;
     Post.findOne({ "_id": self.params.id }).exec()
@@ -34,6 +36,7 @@ function getOnePost() {
         });
 }
 
+// Créer un post
 function createPost() {
     var self = this;
     var newPost = new Post(self.body);
@@ -48,6 +51,7 @@ function createPost() {
         });
 }
 
+// Modifier un post
 function modifyPost() {
     var self = this;
     Post.findByIdAndUpdate({
@@ -63,6 +67,7 @@ function modifyPost() {
         });
 }
 
+// Supprimer un post
 function deletePost() {
     var self = this;
     Post.findByIdAndDelete(self.params.id)
